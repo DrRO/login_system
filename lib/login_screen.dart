@@ -1,3 +1,4 @@
+import 'package:authentication_flutter/register_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FB),
+      backgroundColor: const Color(0xFFFFFF),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -42,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   "Welcome back you've\nbeen missed!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 20,
                     color: Colors.black54,
                   ),
                 ),
@@ -82,13 +83,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
 
                 /// Create Account
-                const Text(
-                  "Create new account",
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const RegisterScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Create new account",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF2F4ED8),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
+
+
 
                 const SizedBox(height: 30),
 
@@ -130,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
       controller: emailController,
       decoration: InputDecoration(
         hintText: "Email",
-        filled: true,
+        filled: false,
         fillColor: Colors.white,
         contentPadding:
         const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
@@ -176,7 +190,13 @@ class _LoginScreenState extends State<LoginScreen> {
             });
           },
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide:
+          const BorderSide(color: Color(0xFF2F4ED8), width: 2),
+        ),
       ),
+
     );
   }
 
@@ -197,6 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: const Text(
           "Sign in",
           style: TextStyle(
+            color: Color(0xFFFFFFFF),
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),

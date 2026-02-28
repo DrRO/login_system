@@ -1,3 +1,4 @@
+import 'package:authentication_flutter/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'login_screen.dart';
@@ -14,9 +15,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+debugShowCheckedModeBanner: false,
 
-
-      home: const LoginScreen(),
+      home: const WelcomeScreen(),
     );
   }
 }
