@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'cubit/register/register_cubit.dart';
+import 'cubit/register/register_state.dart';
 import 'login_screen.dart';
+
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -10,10 +13,10 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+  TextEditingController();
 
   bool isPasswordObscure = true;
   bool isConfirmObscure = true;
@@ -22,105 +25,104 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 40),
+    return BlocConsumer<RegisterCubit, RegisterState>(
+      listener: (context, state) {
+        if (state is RegisterSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Account Created Successfully"),
+              backgroundColor: Colors.green,
+            ),
+          );
 
-                  const Text(
-                    "Create Account",
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2F4ED8),
-                    ),
-                  ),
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const LoginScreen(),
+            ),
+          );
+        }
 
-                  const SizedBox(height: 10),
-
-                  const Text(
-                    "Create an account so you can explore all the existing jobs",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                    ),
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  /// Email
-                  _buildEmailField(),
-
-                  const SizedBox(height: 20),
-
-                  /// Password
-                  _buildPasswordField(),
-
-                  const SizedBox(height: 20),
-
-                  /// Confirm Password
-                  _buildConfirmPasswordField(),
-
-                  const SizedBox(height: 30),
-
-                  _buildSignUpButton(),
-
-                  const SizedBox(height: 20),
-
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const LoginScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      "Already have an account?",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF2F4ED8),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  const Text(
-                    "Or continue with",
-                    style: TextStyle(fontSize: 12),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+        if (state is RegisterError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.error),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFF5F6FA),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
                     children: [
-                      _socialButton(Icons.g_mobiledata),
-                      const SizedBox(width: 20),
-                      _socialButton(Icons.facebook),
-                      const SizedBox(width: 20),
-                      _socialButton(Icons.apple),
+                      const SizedBox(height: 40),
+
+                      const Text(
+                        "Create Account",
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2F4ED8),
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      const Text(
+                        "Create an account so you can explore all the existing jobs",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                        ),
+                      ),
+
+                      const SizedBox(height: 40),
+
+                      _buildEmailField(),
+                      const SizedBox(height: 20),
+
+                      _buildPasswordField(),
+                      const SizedBox(height: 20),
+
+                      _buildConfirmPasswordField(),
+                      const SizedBox(height: 30),
+
+                      _buildSignUpButton(state),
+
+                      const SizedBox(height: 20),
+
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          "Already have an account?",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF2F4ED8),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
                     ],
                   ),
-
-                  const SizedBox(height: 30),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -186,7 +188,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildSignUpButton() {
+  Widget _buildSignUpButton(RegisterState state) {
     return SizedBox(
       width: double.infinity,
       height: 55,
@@ -197,14 +199,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        onPressed: () {
+        onPressed: state is RegisterLoading
+            ? null
+            : () {
           if (_formKey.currentState!.validate()) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Account Created Successfully")),
+            RegisterCubit.get(context).registerUser(
+              email: emailController.text.trim(),
+              password: passwordController.text.trim(),
             );
           }
         },
-        child: const Text(
+        child: state is RegisterLoading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : const Text(
           "Sign up",
           style: TextStyle(
             color: Colors.white,
@@ -215,23 +222,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _socialButton(IconData icon) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Icon(icon),
-    );
-  }
-
   InputDecoration _inputDecoration(
       String hint,
       bool isPassword,
-      [bool obscure = false,
-        VoidCallback? toggle]) {
+      [bool obscure = false, VoidCallback? toggle]
+      ) {
     return InputDecoration(
       hintText: hint,
       filled: true,
@@ -245,7 +240,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       suffixIcon: isPassword
           ? IconButton(
         icon: Icon(
-            obscure ? Icons.visibility_off : Icons.visibility),
+          obscure ? Icons.visibility_off : Icons.visibility,
+        ),
         onPressed: toggle,
       )
           : null,
