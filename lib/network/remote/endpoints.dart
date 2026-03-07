@@ -4,4 +4,4 @@ const USERS = '/users';
 
 //const REGISTER = 'Users/register';
 
-//const LOGIN = 'Users/login';
+const LOGIN = '/auth/login';

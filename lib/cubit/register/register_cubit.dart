@@ -25,7 +25,7 @@ class RegisterCubit extends Cubit<RegisterState> {
           "password": password,
           "role": "customer",
           "avatar":
-          "https://api.escuelajs.co/api/v1/files/0d65.png"
+          "https://api.escuelajs.co/api/v1/files/0d80.png"
         },
       );
 

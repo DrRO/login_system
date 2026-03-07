@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'cubit/register/register_cubit.dart';
-import 'cubit/register/register_state.dart';
+
+import '../cubit/register/register_cubit.dart';
+import '../cubit/register/register_state.dart';
 import 'login_screen.dart';
+
 
 
 class RegisterScreen extends StatefulWidget {
